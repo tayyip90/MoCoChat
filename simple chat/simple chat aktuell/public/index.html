@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CloudChat</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+ <ul class="pages">
+    <li class="chatPage">
+      <div class="chatArea">
+        <ul class="messages"></ul>
+      </div>
+	  <div class="userArea">
+		users
+		<ul class="users"></ul>
+	  </div>
+	  <div class="privateArea">
+		private
+		<ul class="pmessages"></ul>
+	  </div>
+	  <p class="to"></p>
+      <input class="inputMessage" placeholder="C'mon type something..."/>
+    </li>
+    <li class="loginPage">
+      <div class="form">
+        <h3 class="titleName">Username</h3>
+        <form id="userLogin">
+          <input id="user_input" type="text">
+          <input type="submit" value="Send">
+      </form>
+      </div>
+    </li>
+  </ul>
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>  
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

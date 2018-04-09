@@ -1,0 +1,14 @@
+{
+  "name": "CloudCompGroupL",
+  "version": "0.0.1",
+  "description": "Our first chat app",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.15.2",
+    "express-validator": "^5.1.2",
+    "socket.io": "^2.0.4"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}
