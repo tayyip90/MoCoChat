@@ -37,7 +37,9 @@ io.on('connection', function(socket){
             // var stream = ss.createStream();
             // ss(socket).emit('receive file', stream, {name: filename});
             // fs.createReadStream(filename).pipe(stream);
-
+            fs.readFile(filename, function(err, buffer){
+                socket.emit('receive file', { buffer: buffer });
+            });
             //delete temp file after transmission.
         });
     });
