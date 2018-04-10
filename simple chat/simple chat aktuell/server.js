@@ -3,12 +3,14 @@ var express= require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var ss = require('socket.io-stream');
+var fs = require('fs');
 var path = require('path');
+var logic = require('./util/logicHelper')
 //process.env.PORT || 3000 : whatever is in the environment variable PORT, or 3000 if there's nothing there. (running PORT=1234 node index.js sets port to 1234(Windows: set PORT=1234 then npm start in new line)
 var port = process.env.PORT || 3000; 
 var userList = [];
 var allSockets = {};
-var logic = require('./util/logicHelper')
 var userCount = 0;
 var connectionCount = 0;
 var login=false
@@ -24,7 +26,21 @@ io.on('connection', function(socket){
     connectionCount++;
     console.log('a user just connected!');
     console.log('current connections:' + connectionCount);
-    
+    ss(socket).on('send file', function (stream, data) {
+        var filename = 'temp.txt';//+somehashvalue+random for unique filename
+        stream.pipe(fs.createWriteStream(filename));
+
+        //gets called when temporary file finished being created
+        stream.on('end', function () {
+            console.log("before delivery");
+            console.log("after delivery");
+            // var stream = ss.createStream();
+            // ss(socket).emit('receive file', stream, {name: filename});
+            // fs.createReadStream(filename).pipe(stream);
+
+            //delete temp file after transmission.
+        });
+    });
     //disconnect event
     socket.on('disconnect', function(){
         connectionCount--;
@@ -81,6 +97,9 @@ io.on('connection', function(socket){
             socket.emit('user connected', {
                 username:socket.username,
                 userCount:userCount
+            });
+            socket.emit('receive user list', {
+                userList: userList
             });
         }else{
             socket.emit('user already exists', {

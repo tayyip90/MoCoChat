@@ -16,7 +16,7 @@ module.exports = {
       }
       return array;
     },
-    getUserList: function (Obje){
+    getUserList: function (array){
         var userList=[]
         for(var i = 0; i < array.length; i++) {
         userList.push(array[i].username)

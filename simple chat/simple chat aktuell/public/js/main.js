@@ -24,7 +24,7 @@ $(function(){
 	}
 	
 	function addPrivateChatMessage(data){
-		$('.pmessages').append('<li>'+getTimestamp()+' ' + data.username+': '+data.message+"</li>");
+		$('.pmessages').append('<li>'+getTimestamp()+'' + data.username+' whispers: '+data.message+"</li>");
 		//isn't working yet
 		//TODO:Adaptive scrolltop
 		// $('.messages').scrollTop = $('.messages').scrollHeight;
@@ -82,7 +82,7 @@ $(function(){
 		}
 	}
 	function welcomeMessage(){
-		addMessage('<h1>HELLOOOOOOOOOOOOOO EVERYNYAN!</h1> ')
+		addMessage('<h1>Welcome to our Chat!</h1> ')
 	}
 
 	/**
@@ -135,14 +135,15 @@ $(function(){
 		$('.loginPage').off('click')
 		welcomeMessage()
 		if(data.userCount === 1){
-			addMessage(''+data.userCount+' User has connected');
+			addMessage('<h1>'+data.userCount+' User has connected</h1>');
 		}else{
-			addMessage(''+data.userCount+' Users have connected');
+			addMessage('<h1>'+data.userCount+' Users have connected</h1>');
 		}
 	});
 
 	socket.on('user already exists', function(data){
 		console.log(data.username + ' already exists.')
+		$('#loginFeedback').text("Username already exists");
 	});
 
 	socket.on('receive user list', function(data){
@@ -152,14 +153,11 @@ $(function(){
 
 	socket.on('user connected', function(data){
 		userCount=data.userCount;
-		//IDEA: Let the users manage the online user list..?!
-		// userList.push(data.username)
 		addMessage(''+data.username+' has connected.')
 	});
 	
 	socket.on('user disconnected', function(data){
-		// userList = userList.filter(function(e) { return e !== data.username })
-		addMessage(''+data.username+' has left.')
+		addMessage('<h1>'+data.username+' has left.</h1>')
 	});
 	
 
@@ -177,5 +175,15 @@ $(function(){
 			}
 		}
 	});
-	
+		// File Picker on change emitting 'send file' event and streaming file content
+		$('#file').change(function (e) {
+			var file = e.target.files[0];
+			var stream = ss.createStream();
+			// upload a file to the server.
+			ss(socket).emit('send file', stream, file);
+			ss.createBlobReadStream(file).pipe(stream);
+			$('#file').val('');
+			$('#file').after('<p>File uploaded!</p>');
+			socket.emit('test');
+		});
 });
