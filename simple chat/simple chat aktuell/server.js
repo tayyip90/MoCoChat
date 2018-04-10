@@ -6,8 +6,8 @@ var io = require('socket.io')(http);
 var path = require('path');
 //process.env.PORT || 3000 : whatever is in the environment variable PORT, or 3000 if there's nothing there. (running PORT=1234 node index.js sets port to 1234(Windows: set PORT=1234 then npm start in new line)
 var port = process.env.PORT || 3000; 
-
-var allSockets = [];
+var userList = [];
+var allSockets = {};
 var logic = require('./util/logicHelper')
 var userCount = 0;
 var connectionCount = 0;
@@ -28,7 +28,6 @@ io.on('connection', function(socket){
     //disconnect event
     socket.on('disconnect', function(){
         connectionCount--;
-        allSockets = logic.removeFromArray(allSockets, socket);
         socket.broadcast.emit('user disconnected', {
             username:socket.username,
             userCount:userCount
@@ -47,7 +46,7 @@ io.on('connection', function(socket){
 
         }else if(message.startsWith('/list')){
             socket.emit('receive user list', {
-                userList:logic.getUserList(allSockets)
+                userList:userList
             });
         }else{
         socket.broadcast.emit('receive user message', {
@@ -56,12 +55,19 @@ io.on('connection', function(socket){
         });
     }
     });
+	
+	socket.on('private', function(to, msg){
+		var id = allSockets[to];
+		io.sockets.connected[id].emit('private', msg);
+	});
+  
     //login event
     socket.on('login', function(name){
        login=true;
         socket.username=name;
-        if(!logic.isNameInArray(allSockets,socket.username)){
-            allSockets.push(socket)
+        if(!logic.isNameInArray(userList,socket.username)){
+			allSockets[socket.username] = socket.id;
+			userList.push(socket.username);
             ++userCount;
             console.log('current users:' + userCount);
             socket.emit('enterChat', {

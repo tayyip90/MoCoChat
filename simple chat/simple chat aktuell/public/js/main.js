@@ -25,29 +25,26 @@ $(function(){
 	}
 	
 	function listUsers(data){
-		console.log(data);
 		$(".users").children("li").remove();
 		var inputElement = document.createElement('input');
-		inputElement.class = "to";
 		inputElement.value = "all";
 		inputElement.name = "all";
 		inputElement.type = "button";
 		inputElement.addEventListener('click', function(){
 			to(this.name);
 		});
-		var li = document.createElement('li')
+		var li = document.createElement('li');
 		li.append(inputElement);
 		$('.users').append(li);
 		for(var i=0; i<data.length; i++){
 			inputElement = document.createElement('input');
-			inputElement.class = "to";
 			inputElement.value = data[i];
 			inputElement.name = data[i];
 			inputElement.type = "button";
 			inputElement.addEventListener('click', function(){
 				to(this.name);
 			});
-			li = document.createElement('li')
+			li = document.createElement('li');
 			li.append(inputElement);
 			$('.users').append(li);
 		}
@@ -55,20 +52,25 @@ $(function(){
 	
 	function to(name){
 		messageto = name;
-		$('.to').val(messageto);
+		console.log(messageto);
 	}
 	//sends message and receives intern commands
 	function sendMessage(){
 		var message = $('.inputMessage').val();
+		console.log(messageto);
 		if(message.startsWith('/list')){
+			$('.inputMessage').val('');
 			socket.emit('user message', message);
-		}else{
+		}else if(messageto=="all"){
 			$('.inputMessage').val('');
 			addChatMessage({
 				username:username,
 				message:message
 			});
 			socket.emit('user message', message);
+		}else{
+			$('.inputMessage').val('');
+			socket.emit('private', messageto, message);
 		}
 	}
 	function welcomeMessage(){
@@ -114,6 +116,11 @@ $(function(){
 	socket.on('receive user message', function(data){
 		addChatMessage(data);
 	});	
+	
+	socket.on('private', function(msg){
+		console.log(msg);
+		$('.pmessages').append("<li>" + msg + "</li>"); 
+	});
 	
 	socket.on('enterChat', function(data) {
 		$('.loginPage').fadeOut(150);
