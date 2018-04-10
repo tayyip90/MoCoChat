@@ -8,6 +8,7 @@ $(function(){
 	var userCount;
 	var userList= [];
 	var messageto = "all";
+	var txt;
 
 	function addMessage(message){
 		console.log(message);
@@ -52,7 +53,9 @@ $(function(){
 	
 	function to(name){
 		messageto = name;
-		console.log(messageto);
+		txt.parentNode.removeChild(txt);
+		txt = document.createTextNode("message to: " + messageto);
+		$('.to').append(txt);
 	}
 	//sends message and receives intern commands
 	function sendMessage(){
@@ -160,7 +163,8 @@ $(function(){
 		data.preventDefault();
 		username = $('#user_input').val().trim();
 		socket.emit('login', username);
-		$('.to').val(messageto);
+		txt = document.createTextNode("message to: " + messageto);
+		$('.to').append(txt);
 	});
 	$window.keydown(function (event){
 		if(event.which === 13){

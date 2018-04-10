@@ -118,18 +118,20 @@ ul {
   padding-bottom: 60px;
   width: 70%;
   float: left;
+
 }
 
 .userArea {
 	height: 500px;
 	width: 30%;
 	float: left;
+
 }
 
 .privateArea {
 	height: 300px;
 	width: 100%;
-	margin: 0 auto;
+	float:left;
 }
 
 .messages {
@@ -159,7 +161,6 @@ ul {
   left: 0;
   outline: none;
   padding-left: 10px;
-  position: absolute;
   right: 0;
   width: 100%;
 }
