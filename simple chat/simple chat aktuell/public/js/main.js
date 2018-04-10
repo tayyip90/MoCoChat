@@ -11,15 +11,20 @@ $(function(){
 	var txt;
 
 	function addMessage(message){
-		console.log(message);
 		$('.messages').append('<li>'+message+"</li>");
 		// isn't working yet
 		//TODO:Adaptive scrolltop
 		// $('.messages')[0].scrollTop = $('.messages')[0].scrollHeight;
 	}
 	function addChatMessage(data){
-		console.log(data.message);
 		$('.messages').append('<li>'+getTimestamp()+' ' + data.username+': '+data.message+"</li>");
+		//isn't working yet
+		//TODO:Adaptive scrolltop
+		// $('.messages').scrollTop = $('.messages').scrollHeight;
+	}
+	
+	function addPrivateChatMessage(data){
+		$('.pmessages').append('<li>'+getTimestamp()+' ' + data.username+': '+data.message+"</li>");
 		//isn't working yet
 		//TODO:Adaptive scrolltop
 		// $('.messages').scrollTop = $('.messages').scrollHeight;
@@ -120,9 +125,8 @@ $(function(){
 		addChatMessage(data);
 	});	
 	
-	socket.on('private', function(msg){
-		console.log(msg);
-		$('.pmessages').append("<li>" + msg + "</li>"); 
+	socket.on('private', function(data){
+		addPrivateChatMessage(data);
 	});
 	
 	socket.on('enterChat', function(data) {

@@ -28,6 +28,8 @@ io.on('connection', function(socket){
     //disconnect event
     socket.on('disconnect', function(){
         connectionCount--;
+		delete allSockets[socket.username];
+		userList = logic.removeFromArray(userList, socket.username);
         socket.broadcast.emit('user disconnected', {
             username:socket.username,
             userCount:userCount
@@ -58,7 +60,10 @@ io.on('connection', function(socket){
 	
 	socket.on('private', function(to, msg){
 		var id = allSockets[to];
-		io.sockets.connected[id].emit('private', msg);
+		io.sockets.connected[id].emit('private', {
+            username:socket.username,
+            message:msg
+        });
 	});
   
     //login event
