@@ -29,23 +29,30 @@ io.on('connection', function (socket) {
 
 
     ss(socket).on('send file', function (stream, data) {
-        var filename = 'temp.txt';//+somehashvalue+random for unique filename
-        stream.pipe(fs.createWriteStream(filename));
+        var filename = data.filename;
+        var randomNumbers = logic.generateRandomInt(100000)
+        var filepath = './temp/'+logic.hashCode(filename)+'-'+randomNumbers;
+        stream.pipe(fs.createWriteStream(filepath));
 
         //gets called when temporary file finished being created
         stream.on('end', function () {
             if (data.receiver == "all") {
                 fs.readFile(filename, function (err, buffer) {
-                    socket.broadcast.emit('receive file', { buffer: buffer });
+                    socket.broadcast.emit('receive file', { buffer: buffer, 
+                                                            filename: filename });
                 });
             } else {
                 fs.readFile(filename, function (err, buffer) {
                     var id = allSockets[data.receiver];
-                    io.sockets.connected[id].emit('receive file', { buffer: buffer });
+                    io.sockets.connected[id].emit('receive file', { buffer: buffer, 
+                                                                    filename: filename });
                     
                 });
             }
             //delete temp file after transmission.
+            fs.unlink(filepath, (err) => {
+                if (err) throw err;
+              });
         });
     });
     //disconnect event

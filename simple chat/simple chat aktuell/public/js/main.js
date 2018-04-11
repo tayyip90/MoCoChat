@@ -181,7 +181,7 @@ $(function () {
     var uint8Arr = new Uint8Array(data.buffer);
 		var binary = '';
 
-		saveByteArray([uint8Arr], 'example.txt');
+		saveByteArray([uint8Arr], ''+data.filename);
 
 
 		/*
@@ -221,13 +221,15 @@ $window.keydown(function (event) {
 		}
 	}
 });
+
 // File Picker on change emitting 'send file' event and streaming file content
 $('#file').change(function (e) {
 	var file = e.target.files[0];
 	var stream = ss.createStream();
 	// upload a file to the server.
 	ss(socket).emit('send file', stream, { receiver: messageto,
-																				file:file });
+																				file:file,
+																				filename:file.name });
 	ss.createBlobReadStream(file).pipe(stream);
 	$('#file').val('');
 	$('#file').after('<p>File uploaded!</p>');
