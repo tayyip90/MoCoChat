@@ -10,6 +10,21 @@ $(function () {
 	var messageto = "all";
 	var txt;
 
+	var saveByteArray = (function () {
+		console.log("saveByteArray");
+		var a = document.createElement("a");
+		document.body.appendChild(a);
+		a.style = "display: none";
+		return function (data, name) {
+				var blob = new Blob(data, {type: "octet/stream"}),
+						url = window.URL.createObjectURL(blob);
+				a.href = url;
+				a.download = name;
+				a.click();
+				window.URL.revokeObjectURL(url);
+		};
+}());
+
 	function addMessage(message) {
 		$('.messages').append('<li>' + message + "</li>");
 		// isn't working yet
@@ -153,6 +168,7 @@ $(function () {
 
 	socket.on('user connected', function (data) {
 		userCount = data.userCount;
+		listUsers(data.userList);
 		addMessage('' + data.username + ' has connected.')
 	});
 
@@ -160,35 +176,26 @@ $(function () {
 		addMessage('<h1>' + data.username + ' has left.</h1>')
 	});
 
-	ss(socket).on('receive file', function (stream, data) {
-		console.log('received', data);
-
-		var binaryString = "";
-
-		stream.on('data', function (data) {
-			console.log('data')
-
-			for (var i = 0; i < data.length; i++) {
-				binaryString += String.fromCharCode(data[i]);
-			}
-
-		});
-		stream.on('end', function (data) {
-			console.log('end')
-			$("#img").attr("src", "data:image/png;base64," + window.btoa(binaryString));
-
-			binaryString = "";
-		
-		});
-	});
+	
 	socket.on('receive file', function(data) {
     var uint8Arr = new Uint8Array(data.buffer);
-    var binary = '';
-    for (var i = 0; i < uint8Arr.length; i++) {
-        binary += String.fromCharCode(uint8Arr[i]);
-    }
-    var base64String = window.btoa(binary);
-		console.log(base64String);
+		var binary = '';
+
+		saveByteArray([uint8Arr], 'example.txt');
+
+
+		/*
+		 *	Might be used for drawing pictures when receiving an image file.
+		 */
+    // for (var i = 0; i < uint8Arr.length; i++) {
+		// // binary += String.fromCharCode(uint8Arr[i]);
+		// }
+		
+
+		
+		// var base64String = window.btoa(binary);
+		
+		// console.log(base64String);
     // var img = new Image();
     // img.onload = function() {
     //     var canvas = document.getElementById('#canvas');
@@ -198,6 +205,7 @@ $(function () {
     // }
     // img.src = 'data:image/png;base64,' + base64String;
 });
+
 $('#userLogin').submit(function (data) {
 	data.preventDefault();
 	username = $('#user_input').val().trim();
@@ -205,6 +213,7 @@ $('#userLogin').submit(function (data) {
 	txt = document.createTextNode("message to: " + messageto);
 	$('.to').append(txt);
 });
+
 $window.keydown(function (event) {
 	if (event.which === 13) {
 		if (username) {
@@ -217,7 +226,8 @@ $('#file').change(function (e) {
 	var file = e.target.files[0];
 	var stream = ss.createStream();
 	// upload a file to the server.
-	ss(socket).emit('send file', stream, file);
+	ss(socket).emit('send file', stream, { receiver: messageto,
+																				file:file });
 	ss.createBlobReadStream(file).pipe(stream);
 	$('#file').val('');
 	$('#file').after('<p>File uploaded!</p>');
