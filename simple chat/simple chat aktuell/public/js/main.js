@@ -77,6 +77,7 @@ $(function () {
 		txt = document.createTextNode("message to: " + messageto);
 		$('.to').append(txt);
 	}
+
 	//sends message and receives intern commands
 	function sendMessage() {
 		var message = $('.inputMessage').val();
@@ -149,6 +150,7 @@ $(function () {
 		$('.chatPage').show();
 		$('.loginPage').off('click')
 		welcomeMessage()
+		listUsers(data.userList)
 		if (data.userCount === 1) {
 			addMessage('<h1>' + data.userCount + ' User has connected</h1>');
 		} else {
@@ -161,10 +163,6 @@ $(function () {
 		$('#loginFeedback').text("Username already exists");
 	});
 
-	socket.on('receive user list', function (data) {
-		console.log(data.userList);
-		listUsers(data.userList);
-	})
 
 	socket.on('user connected', function (data) {
 		userCount = data.userCount;

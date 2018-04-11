@@ -98,21 +98,21 @@ io.on('connection', function (socket) {
 
     //login event
     socket.on('login', function (name) {
-        login = true;
+        
         socket.username = name;
         if (!logic.isNameInArray(userList, socket.username)) {
+            login = true;
             allSockets[socket.username] = socket.id;
             userList.push(socket.username);
             ++userCount;
             console.log('current users:' + userCount);
             socket.emit('enterChat', {
-                userCount: userCount
+                userCount: userCount,
+                userList:userList
             });
-            socket.emit('user connected', {
+            socket.broadcast.emit('user connected', {
                 username: socket.username,
-                userCount: userCount
-            });
-            socket.emit('receive user list', {
+                userCount: userCount,
                 userList: userList
             });
         } else {
