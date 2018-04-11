@@ -39,9 +39,6 @@ io.on('connection', function (socket) {
                     socket.broadcast.emit('receive file', { buffer: buffer });
                 });
             } else {
-                // var stream = ss.createStream();
-                // ss(socket).emit('receive file', stream, {name: filename});
-                // fs.createReadStream(filename).pipe(stream);
                 fs.readFile(filename, function (err, buffer) {
                     var id = allSockets[data.receiver];
                     io.sockets.connected[id].emit('receive file', { buffer: buffer });
