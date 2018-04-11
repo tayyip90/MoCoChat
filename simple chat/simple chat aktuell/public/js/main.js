@@ -26,32 +26,31 @@ $(function () {
 }());
 
 	function addMessage(message) {
-		$('.messages').append('<li>' + message + "</li>");
-		// isn't working yet
-		//TODO:Adaptive scrolltop
-		// $('.messages')[0].scrollTop = $('.messages')[0].scrollHeight;
+		$('.messages').append('<li>' + message + "</li>"); //appends messages as list items to list class messages
+	
 	}
 	function addChatMessage(data) {
 		$('.messages').append('<li>' + getTimestamp() + ' ' + data.username + ': ' + data.message + "</li>");
-		//isn't working yet
-		//TODO:Adaptive scrolltop
-		// $('.messages').scrollTop = $('.messages').scrollHeight;
+	
 	}
 
 	function addPrivateChatMessage(data) {
 		$('.pmessages').append('<li>' + getTimestamp() + '' + data.username + ' whispers: ' + data.message + "</li>");
-		//isn't working yet
-		//TODO:Adaptive scrolltop
-		// $('.messages').scrollTop = $('.messages').scrollHeight;
-	}
 
+	}
+	
+	/**
+	*
+	*displaying users in chatroom
+	*
+	*/
 	function listUsers(data) {
-		$(".users").children("li").remove();
-		var inputElement = document.createElement('input');
+		$(".users").children("li").remove();	//removes old list items
+		var inputElement = document.createElement('input'); //create input element of type button and adds as list items into list. to choose the receiver
 		inputElement.value = "all";
 		inputElement.name = "all";
 		inputElement.type = "button";
-		inputElement.addEventListener('click', function () {
+		inputElement.addEventListener('click', function () { //Eventlistener for buttonclick calling the method to() 
 			to(this.name);
 		});
 		var li = document.createElement('li');
@@ -71,10 +70,10 @@ $(function () {
 		}
 	}
 
-	function to(name) {
-		messageto = name;
-		txt.parentNode.removeChild(txt);
-		txt = document.createTextNode("message to: " + messageto);
+	function to(name) { //button name/username 
+		messageto = name; //the new receiver
+		txt.parentNode.removeChild(txt); //remove old text node
+		txt = document.createTextNode("message to: " + messageto); 
 		$('.to').append(txt);
 	}
 
@@ -136,15 +135,18 @@ $(function () {
 		// return the formatted string
 		return date.join("/") + " " + time.join(":") + " " + suffix;
 	}
-
+	//receiving broadcast messsage
 	socket.on('receive user message', function (data) {
 		addChatMessage(data);
 	});
-
+	//receiving private message
 	socket.on('private', function (data) {
 		addPrivateChatMessage(data);
 	});
-
+	
+	//entering chat
+	//set login page unvisible
+	//show chat page ...
 	socket.on('enterChat', function (data) {
 		$('.loginPage').fadeOut(150);
 		$('.chatPage').show();
@@ -157,7 +159,7 @@ $(function () {
 			addMessage('<h1>' + data.userCount + ' Users have connected</h1>');
 		}
 	});
-
+	
 	socket.on('user already exists', function (data) {
 		console.log(data.username + ' already exists.')
 		$('#loginFeedback').text("Username already exists");
@@ -204,6 +206,7 @@ $(function () {
     // img.src = 'data:image/png;base64,' + base64String;
 });
 
+
 $('#userLogin').submit(function (data) {
 	data.preventDefault();
 	username = $('#user_input').val().trim();
@@ -212,6 +215,7 @@ $('#userLogin').submit(function (data) {
 	$('.to').append(txt);
 });
 
+//by pressing enter message will send
 $window.keydown(function (event) {
 	if (event.which === 13) {
 		if (username) {
