@@ -2,7 +2,7 @@ module.exports = {
     isNameInArray: function (array, name) {
         var found = false;
         for(var i = 0; i < array.length; i++) {
-            if (array[i].username == name) {
+            if (array[i] === name) {
                 found = true;
                 break;
             }
