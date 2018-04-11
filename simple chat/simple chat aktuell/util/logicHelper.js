@@ -1,4 +1,5 @@
 module.exports = {
+	//method to find name in array and return the boolean value
     isNameInArray: function (array, name) {
         var found = false;
         for(var i = 0; i < array.length; i++) {
@@ -9,6 +10,7 @@ module.exports = {
         }
         return found;
     },
+	//removes Object from Array and return new Array
     removeFromArray: function (array, object) { 
       var index = array.indexOf(object);
       if(index > -1){
@@ -16,6 +18,7 @@ module.exports = {
       }
       return array;
     },
+	//push received userlist into array and return new Array
     getUserList: function (array){
         var userList=[]
         for(var i = 0; i < array.length; i++) {

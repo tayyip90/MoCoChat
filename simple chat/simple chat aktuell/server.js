@@ -87,7 +87,8 @@ io.on('connection', function (socket) {
             });
         }
     });
-
+	
+	//private user message event
     socket.on('private', function (to, msg) {
         var id = allSockets[to];
         io.sockets.connected[id].emit('private', {
