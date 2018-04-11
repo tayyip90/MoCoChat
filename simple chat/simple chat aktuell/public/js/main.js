@@ -38,7 +38,12 @@ $(function () {
 		$('.pmessages').append('<li>' + getTimestamp() + '' + data.username + ' whispers: ' + data.message + "</li>");
 
 	}
-
+	
+	/**
+	*
+	*displaying users in chatroom
+	*
+	*/
 	function listUsers(data) {
 		$(".users").children("li").remove();	//removes old list items
 		var inputElement = document.createElement('input'); //create input element of type button and adds as list items into list. to choose the receiver
